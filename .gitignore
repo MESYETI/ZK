@@ -1,4 +1,12 @@
-bin
-bin/
-bin/*
-NotElite*
+*
+!/docs/
+!/docs/**
+!/source/
+!/source/**
+!/LICENSE
+!/Makefile
+!/README.md
+.*
+!/.github/
+!/.gitattributes
+!/.gitignore

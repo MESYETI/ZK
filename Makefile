@@ -1,33 +1,53 @@
-SRC   = $(wildcard source/*.c) $(wildcard source/**/*.c)
-DEPS  = $(wildcard source/*.h) $(wildcard source/**/*.h)
-OBJ   = $(addsuffix .o,$(subst source/,bin/,$(basename ${SRC})))
-OUT   = NotElite
-FLAGS = -std=c99 -Wall -Wextra -pedantic -g
+SOURCES := $(wildcard source/*.c) $(wildcard source/**/*.c)
+OBJECTS := $(patsubst source/%.c,objects/%.o,$(SOURCES))
+OUT     := zk
 
-ifeq ($(PLAT), windows)
-	CC     = x86_64-w64-mingw32-gcc
-	LIBS   = $(shell x86_64-w64-mingw32-pkg-config sdl2 --libs) -lopengl32
-	FLAGS += $(shell x86_64-w64-mingw32-pkg-config sdl2 --cflags)
+ifeq ($(PLAT),windows)
+	CC := x86_64-w64-mingw32-gcc
+	override LDLIBS := $(LDLIBS) $(shell x86_64-w64-mingw32-pkg-config sdl2 --libs) -lopengl32
+	override CFLAGS := $(CFLAGS) $(shell x86_64-w64-mingw32-pkg-config sdl2 --cflags)
 else
-	LIBS = -lSDL2 -lm -lGL
+	override LDLIBS += -lSDL2 -lGL
+endif
+LD := $(CC)
+
+override CFLAGS += -std=c99 -Wall -Wextra -Wuninitialized -Wundef -pedantic
+override LDLIBS += -lm
+
+ifeq ($(BUILD),release)
+	override CFLAGS += -O3
+else
+	override CFLAGS += -g
+	ifeq ($(ASAN),y)
+		override CFLAGS += -fsanitize=address
+	endif
 endif
 
-ifeq ($(BUILD), release)
-	FLAGS += -O3
-endif
+.SECONDEXPANSION:
 
-compile: ./bin $(OBJ) $(SRC) $(DEPS)
-	$(CC) $(OBJ) $(LIBS) -o $(OUT)
+define inc
+$$(patsubst /dev/null\:,,$$(patsubst /dev/null,,$$(wildcard $$(shell $(CC) $(CFLAGS) $(CPPFLAGS) -xc -MM /dev/null $$(wildcard $(1)) -MT /dev/null))))
+endef
 
-./bin:
-	mkdir -p bin
+all: $(OUT)
+	@:
 
-bin/%.o: source/%.c $(DEPS)
-	$(CC) -c $< $(FLAGS) -o $@
+run: $(OUT)
+	'$(dir $<)$(notdir $<)' $(RUNFLAGS)
+
+$(OUT): $(OBJECTS)
+	$(LD) $(LDFLAGS) $^ $(LDLIBS) -o $@
+
+objects/:
+	mkdir -p objects
+
+objects/%.o: source/%.c $(call inc,source/%.c) | objects/
+	$(CC) $(CFLAGS) $(CPPFLAGS) $< -c -o $@
 
 clean:
-	rm -r bin/* $(OUT)
-	if [ -f bin ]; then rm -r bin; fi
-	if [ -f $(OUT) ]; then rm $(OUT); fi
+	rm -r objects
 
+distclean: clean
+	rm $(OUT)
 
+.PHONY: all run clean distclean
