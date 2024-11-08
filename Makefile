@@ -25,8 +25,10 @@ endif
 
 .SECONDEXPANSION:
 
-define inc
-$$(patsubst /dev/null\:,,$$(patsubst /dev/null,,$$(wildcard $$(shell $(CC) $(CFLAGS) $(CPPFLAGS) -xc -MM /dev/null $$(wildcard $(1)) -MT /dev/null))))
+deps.filter := %.c %.h
+deps.option := -MM
+define deps
+$$(filter $$(deps.filter),,$$(shell $(CC) $(CFLAGS) $(CPPFLAGS) -E $(deps.option) $(1)))
 endef
 
 all: $(OUT)
@@ -41,7 +43,7 @@ $(OUT): $(OBJECTS)
 objects/:
 	mkdir -p objects
 
-objects/%.o: source/%.c $(call inc,source/%.c) | objects/
+objects/%.o: source/%.c $(call deps,source/%.c) | objects/
 	$(CC) $(CFLAGS) $(CPPFLAGS) $< -c -o $@
 
 clean:
