@@ -3,6 +3,8 @@
 !/docs/**
 !/source/
 !/source/**
+!/tools/
+!/tools/**
 !/LICENSE
 !/Makefile
 !/README.md
