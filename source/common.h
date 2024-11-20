@@ -1,5 +1,5 @@
-#ifndef PROJ_COMMON_H
-#define PROJ_COMMON_H
+#ifndef ZK_COMMON_H
+#define ZK_COMMON_H
 
 #include <math.h>
 #include <assert.h>

@@ -1,14 +1,3 @@
-*
-!/docs/
-!/docs/**
-!/source/
-!/source/**
-!/tools/
-!/tools/**
-!/LICENSE
-!/Makefile
-!/README.md
-.*
-!/.github/
-!/.gitattributes
-!/.gitignore
+bin
+objects
+zk

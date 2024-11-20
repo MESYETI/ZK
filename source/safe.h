@@ -1,5 +1,5 @@
-#ifndef PROJ_SAFE_H
-#define PROJ_SAFE_H
+#ifndef ZK_SAFE_H
+#define ZK_SAFE_H
 
 #include "common.h"
 

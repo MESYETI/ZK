@@ -1,5 +1,5 @@
-#ifndef PROJ_TYPES_H
-#define PROJ_TYPES_H
+#ifndef ZK_TYPES_H
+#define ZK_TYPES_H
 
 typedef struct {
 	float x, y, z;

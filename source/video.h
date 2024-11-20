@@ -1,5 +1,5 @@
-#ifndef PROJ_VIDEO_H
-#define PROJ_VIDEO_H
+#ifndef ZK_VIDEO_H
+#define ZK_VIDEO_H
 
 #include "common.h"
 #include <SDL2/SDL.h>

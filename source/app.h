@@ -1,5 +1,5 @@
-#ifndef PROJ_APP_H
-#define PROJ_APP_H
+#ifndef ZK_APP_H
+#define ZK_APP_H
 
 #include "video.h"
 #include "common.h"
