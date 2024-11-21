@@ -8,6 +8,9 @@ void App_Init(void) {
 	app.running = true;
 	Video_Init();
 	Renderer_Init();
+
+	Model_Load(&app.model, "villager.zkm");
+	Log("Loaded model");
 }
 
 void App_Update(void) {
@@ -72,14 +75,7 @@ void App_Update(void) {
 	Renderer_CalculateViewMatrix();
 	glLoadMatrixf((float*) renderer.viewMatrix);
 
-	glBegin(GL_TRIANGLES);
-	glColor3f(1.0, 0.0, 0.0);
-	glVertex3f(-0.5f, -0.5f, 1.0f);
-	glColor3f(0.0, 1.0, 0.0);
-	glVertex3f( 0.5f, -0.5f, 1.0f);
-	glColor3f(0.0, 0.0, 1.0);
-	glVertex3f( 0.0f,  0.5f, 1.0f);
-	glEnd();
+	Model_Render(&app.model);
 
 	glFinish();
 	SDL_GL_SwapWindow(video.window);
@@ -88,6 +84,7 @@ void App_Update(void) {
 }
 
 void App_Free(void) {
+	Model_Free(&app.model);
 	Video_Free();
 }
 

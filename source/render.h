@@ -5,7 +5,7 @@
 #include "common.h"
 
 typedef struct {
-	uint8_t r, g, b, a;
+	uint8_t r, g, b;
 } Colour;
 
 typedef struct {

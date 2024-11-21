@@ -1,7 +1,9 @@
 #include <time.h>
 #include <stdio.h>
+#include <assert.h>
 #include <stdarg.h>
 #include <string.h>
+#include "app.h"
 #include "util.h"
 #include "safe.h"
 #include "common.h"
@@ -32,35 +34,35 @@ char* NewString(const char* src) {
 	return ret;
 }
 
-void Log(const char* format, ...) { // most of this is taken from vsprintf(3)
-	int     n    = 0;
-	size_t  size = 0;
-	char*   ret  = NULL;
-	va_list ap;
+// most of this is taken from vsprintf(3)
+#define FMT(RET, FORMAT) do { \
+	int     n    = 0; \
+	size_t  size = 0; \
+	va_list ap; \
+\
+	va_start(ap, FORMAT); \
+	n = vsnprintf(RET, size, FORMAT, ap); \
+	va_end(ap); \
+\
+	assert(n >= 0); \
+\
+	size = n + 1; \
+	RET = (char*) SafeMalloc(size); \
+	if (RET == NULL) { \
+		return; \
+	} \
+\
+	va_start(ap, FORMAT); \
+	n = vsnprintf(RET, size, FORMAT, ap); \
+	va_end(ap); \
+\
+	assert(n >= 0); \
+} while (0);
 
-	// Determine required size
-	va_start(ap, format);
-	n = vsnprintf(ret, size, format, ap);
-	va_end(ap);
+void Log(const char* format, ...) {
+	char* ret = NULL;
 
-	if (n < 0) {
-		return;
-	}
-
-	size = n + 1; // One extra byte for '\0'
-	ret = (char*) SafeMalloc(size);
-	if (ret == NULL) {
-		return;
-	}
-
-	va_start(ap, format);
-	n = vsnprintf(ret, size, format, ap);
-	va_end(ap);
-
-	if (n < 0) {
-		free(ret);
-	    return;
-	}
+	FMT(ret, format);
 
 	time_t     rawTime;
 	struct tm* tm;
@@ -70,4 +72,24 @@ void Log(const char* format, ...) { // most of this is taken from vsprintf(3)
 	
 	printf("[%.2d:%.2d:%.2d] %s\n", tm->tm_hour, tm->tm_min, tm->tm_sec, ret);
 	free(ret);
+}
+
+void Error(const char* format, ...) {
+	char* ret = NULL;
+
+	FMT(ret, format);
+
+	time_t     rawTime;
+	struct tm* tm;
+	
+	time(&rawTime);
+	tm = localtime(&rawTime);
+	
+	printf("[%.2d:%.2d:%.2d] %s\n", tm->tm_hour, tm->tm_min, tm->tm_sec, ret);
+
+	SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR, "Fatal error", ret, NULL);
+	free(ret);
+
+	App_Free();
+	exit(1);
 }
