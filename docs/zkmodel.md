@@ -15,9 +15,9 @@ All integers are little endian
 
 ## Vertices section
 
-| Field name   | Field size (bytes) | Field description                                            |
-| ------------ | ------------------ | ------------------------------------------------------------ |
-| Coordinates  | 12                 | 3 32-bit fixed point numbers with the position of the vertex |
+| Field name   | Field size (bytes) | Field description                                               |
+| ------------ | ------------------ | --------------------------------------------------------------- |
+| Coordinates  | 12                 | 3 32-bit floating point numbers with the position of the vertex |
 
 ## Faces section
 

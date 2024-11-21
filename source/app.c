@@ -39,11 +39,14 @@ void App_Update(void) {
 	{
 		float moveX = 0.0f;
 		float moveZ = 0.0f;
+		float moveY = 0.0f;
 
 		if (keys[SDL_SCANCODE_W]) moveZ += 1.0f;
 		if (keys[SDL_SCANCODE_A]) moveX -= 1.0f;
 		if (keys[SDL_SCANCODE_S]) moveZ -= 1.0f;
 		if (keys[SDL_SCANCODE_D]) moveX += 1.0f;
+		if (keys[SDL_SCANCODE_SPACE]) moveY += 1.0f;
+		if (keys[SDL_SCANCODE_LSHIFT]) moveY -= 1.0f;
 
 		float mul      = atan2f(fabs(moveX), fabs(moveZ));
 		mul            = fabs(1 / (cosf(mul) + sinf(mul)));
@@ -63,11 +66,12 @@ void App_Update(void) {
 
 		float speed = 2.0; // units per second
 		renderer.camPos.x += moveX * speed * app.delta;
+		renderer.camPos.y += moveY * speed * app.delta;
 		renderer.camPos.z += moveZ * speed * app.delta;
 	}
 
-	glColor3b(0, 0, 0);
-	glClear(GL_COLOR_BUFFER_BIT);
+	glColor3ub(0, 0, 0);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	glMatrixMode(GL_PROJECTION);
 	glLoadMatrixf((float*) renderer.projMatrix);

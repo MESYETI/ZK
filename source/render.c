@@ -1,5 +1,6 @@
 #include "common.h"
 #include "render.h"
+#include "video.h"
 
 Renderer renderer;
 
@@ -21,6 +22,11 @@ void Renderer_Init(void) {
 	renderer.projMatrix[1][1] = tmp1;
 	renderer.projMatrix[2][2] = (renderer.nearPlane + renderer.farPlane) * tmp2;
 	renderer.projMatrix[3][2] = 2.0f * renderer.nearPlane * renderer.farPlane * tmp2;
+
+	// set up OpenGL
+	glEnable(GL_DEPTH_TEST);
+	glDepthFunc(GL_LEQUAL);
+	glEnable(GL_CULL_FACE);
 }
 
 void Renderer_CalculateViewMatrix(void) {

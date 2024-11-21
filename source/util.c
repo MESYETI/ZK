@@ -17,7 +17,7 @@ float DegToRad(float deg) {
 }
 
 float Lerp(float a, float b, float t) {
-    return a * (1.0 - t) + (b * t);
+	return a * (1.0 - t) + (b * t);
 }
 
 float CosDeg(float deg) {

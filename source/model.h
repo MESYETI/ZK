@@ -5,7 +5,7 @@
 #include "render.h"
 
 typedef struct {
-	uint32_t vertices[3];
+	uint32_t indices[3];
 	Colour   colour;
 } ModelFace;
 

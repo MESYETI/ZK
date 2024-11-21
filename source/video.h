@@ -7,11 +7,11 @@
 
 #define GL_GLEXT_PROTOTYPES
 #ifdef PLATFORM_OSX
-    #include <OpenGL/gl.h>
-    #include <OpenGL/glext.h>
+	#include <OpenGL/gl.h>
+	#include <OpenGL/glext.h>
 #else
-    #include <GL/gl.h>
-    #include <GL/glext.h>
+	#include <GL/gl.h>
+	#include <GL/glext.h>
 #endif
 
 typedef struct {

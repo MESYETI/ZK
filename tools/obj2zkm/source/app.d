@@ -12,7 +12,7 @@ struct Vertices {
 }
 
 struct Face {
-	uint[3]  vertices;
+	uint[3]  indices;
 	ubyte[3] colour;
 }
 
@@ -22,7 +22,7 @@ ubyte[4] ToLittleEndian(uint value) {
 
 int main(string[] args) {
 	if (args.length != 3) {
-		stderr.writefln("Expected parameters: %s <file.obj> <file.zkm>");
+		stderr.writefln("Expected parameters: %s <file.obj> <file.zkm>", args[0]);
 		return 1;
 	}
 
@@ -36,7 +36,7 @@ int main(string[] args) {
 
 		switch (parts[0]) {
 			case "v": {
-				if (parts.length >= 3) {
+				if (parts.length > 4) {
 					stderr.writefln("Warning: vertices %d uses W value", vertices.length);
 				}
 
@@ -56,10 +56,10 @@ int main(string[] args) {
 
 				foreach (i ; 0 .. 3) {
 					if (parts[i + 1].canFind('/')) {
-						face.vertices[i] = parts[i + 1].split('/')[0].parse!uint();
+						face.indices[i] = parts[i + 1].split('/')[0].parse!uint() - 1;
 					}
 					else {
-						face.vertices[i] = parts[i + 1].parse!uint();
+						face.indices[i] = parts[i + 1].parse!uint() - 1;
 					}
 				}
 
@@ -83,15 +83,23 @@ int main(string[] args) {
 
 	// write vertices
 	foreach (ref vertex ; vertices) {
-		zkm.rawWrite(ToLittleEndian(cast(uint) (vertex.vertices[0] * 65536.0)));
-		zkm.rawWrite(ToLittleEndian(cast(uint) (vertex.vertices[1] * 65536.0)));
-		zkm.rawWrite(ToLittleEndian(cast(uint) (vertex.vertices[2] * 65536.0)));
+		zkm.rawWrite(ToLittleEndian(*(cast(uint*) &vertex.vertices[0])));
+		zkm.rawWrite(ToLittleEndian(*(cast(uint*) &vertex.vertices[1])));
+		zkm.rawWrite(ToLittleEndian(*(cast(uint*) &vertex.vertices[2])));
 	}
 
 	// write faces
 	foreach (ref face ; faces) {
-		foreach (ref vertex ; face.vertices) {
-			zkm.rawWrite(ToLittleEndian(vertex));
+		if (1 /*TODO: make this a cli option*/) {
+			// reverse
+			zkm.rawWrite(ToLittleEndian(face.indices[0]));
+			zkm.rawWrite(ToLittleEndian(face.indices[2]));
+			zkm.rawWrite(ToLittleEndian(face.indices[1]));
+		} else {
+			// don't reverse
+			zkm.rawWrite(ToLittleEndian(face.indices[0]));
+			zkm.rawWrite(ToLittleEndian(face.indices[1]));
+			zkm.rawWrite(ToLittleEndian(face.indices[2]));
 		}
 		foreach (ref colour ; face.colour) {
 			zkm.rawWrite([colour]);
