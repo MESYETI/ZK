@@ -16,8 +16,12 @@ typedef struct {
 	uint32_t   facesNum;
 } Model;
 
+typedef struct {
+	float scale;
+} ModelRenderOpt;
+
 void Model_Load(Model* model, const char* path);
 void Model_Free(Model* model);
-void Model_Render(Model* model);
+void Model_Render(Model* model, ModelRenderOpt* opt);
 
 #endif

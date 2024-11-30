@@ -1,5 +1,5 @@
 SOURCES := $(wildcard source/*.c) $(wildcard source/**/*.c)
-OBJECTS := $(patsubst source/%.c,objects/%.o,$(SOURCES))
+OBJECTS := $(patsubst source/%.c,bin/%.o,$(SOURCES))
 OUT     := zk
 
 ifeq ($(PLAT),windows)
@@ -11,7 +11,7 @@ else
 endif
 LD := $(CC)
 
-override CFLAGS += -std=c99 -Wall -Wextra -Wuninitialized -Wundef -pedantic
+override CFLAGS += -std=c99 -Wall -Wextra -Wuninitialized -Wundef -pedantic -Ilib
 override LDLIBS += -lm
 
 ifeq ($(BUILD),release)
@@ -40,14 +40,14 @@ run: $(OUT)
 $(OUT): $(OBJECTS)
 	$(LD) $(LDFLAGS) $^ $(LDLIBS) -o $@
 
-objects/:
-	mkdir -p objects
+bin/:
+	mkdir -p bin
 
-objects/%.o: source/%.c $(call deps,source/%.c) | objects/
+bin/%.o: source/%.c $(call deps,source/%.c) | bin/
 	$(CC) $(CFLAGS) $(CPPFLAGS) $< -c -o $@
 
 clean:
-	rm -r objects
+	rm -r bin
 
 distclean: clean
 	rm $(OUT)

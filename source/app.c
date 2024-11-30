@@ -1,6 +1,7 @@
 #include "app.h"
 #include "util.h"
 #include "render.h"
+#include "texture.h"
 
 App app;
 
@@ -11,6 +12,8 @@ void App_Init(void) {
 
 	Model_Load(&app.model, "villager.zkm");
 	Log("Loaded model");
+
+	Texture_LoadFile(0, "assets/textures.png");
 }
 
 void App_Update(void) {
@@ -79,7 +82,10 @@ void App_Update(void) {
 	Renderer_CalculateViewMatrix();
 	glLoadMatrixf((float*) renderer.viewMatrix);
 
-	Model_Render(&app.model);
+	ModelRenderOpt opt;
+	opt.scale = 0.1;
+
+	Model_Render(&app.model, &opt);
 
 	glFinish();
 	SDL_GL_SwapWindow(video.window);
