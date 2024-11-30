@@ -110,19 +110,19 @@ void Model_Render(Model* model, ModelRenderOpt* opt) {
 		glColor3ub(c[0], c[1], c[2]);
 		#endif
 
-		glTexCoord2i(8, 16);
+		glTexCoord2i(0.0, 0.0);
 		glVertex3f(
 			model->vertices[face->indices[0]].x * opt->scale,
 			model->vertices[face->indices[0]].y * opt->scale,
 			model->vertices[face->indices[0]].z * opt->scale
 		);
-		glTexCoord2i(8, 24);
+		glTexCoord2i(1.0, 0.0);
 		glVertex3f(
 			model->vertices[face->indices[1]].x * opt->scale,
 			model->vertices[face->indices[1]].y * opt->scale,
 			model->vertices[face->indices[1]].z * opt->scale
 		);
-		glTexCoord2i(16, 24);
+		glTexCoord2i(1.0, 1.0);
 		glVertex3f(
 			model->vertices[face->indices[2]].x * opt->scale,
 			model->vertices[face->indices[2]].y * opt->scale,
