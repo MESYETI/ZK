@@ -20,7 +20,7 @@ void Texture_LoadFile(int which, const char* path) {
 	}
 
 	glActiveTextureARB(GL_TEXTURE0_ARB + which);
-	glTexImage2D(GL_TEXTURE_2D, 0, 4, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
 
 	Log("Loaded %s to %d", path, which);
 

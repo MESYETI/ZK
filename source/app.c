@@ -94,17 +94,18 @@ void App_Update(void) {
 
 	glEnable(GL_TEXTURE_2D);
 	glBegin(GL_TRIANGLE_FAN);
-	glNormal3f(0,0,1);
-	glTexCoord2d(0,0); // Texture coords for lower left corner
-	glVertex2d(-0.5,-0.5);
-	glTexCoord2d(1,0); // Texture coords for lower right corner
-	glVertex2d(0.5,-0.5);
-	glTexCoord2d(1,1); // Texture coords for upper right corner
-	glVertex2d(0.5,0.5);
-	glTexCoord2d(0,1); // Texture coords for upper left corner
-	glVertex2d(-0.5,0.5);
-	glEnd();
+	glTexCoord2f(0,0); // Texture coords for lower left corner
+	glVertex3f(-0.5, -0.5, 1.0);
 
+	glTexCoord2f(1,   0); // Texture coords for lower right corner
+	glVertex3f(0.5,  -0.5, 1.0);
+	
+	glTexCoord2f(1,   1); // Texture coords for upper right corner
+	glVertex3f(0.5,   0.5, 1.0);
+	
+	glTexCoord2f(0,   1); // Texture coords for upper left corner
+	glVertex3f(-0.5,  0.5, 1.0);
+	glEnd();
 
 	glFinish();
 	fprintf(stderr, "Getting errors\n");

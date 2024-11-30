@@ -26,7 +26,7 @@ void Renderer_Init(void) {
 	// set up OpenGL
 	glEnable(GL_DEPTH_TEST);
 	glDepthFunc(GL_LEQUAL);
-	glEnable(GL_CULL_FACE);
+	glDisable(GL_CULL_FACE);
 }
 
 void Renderer_CalculateViewMatrix(void) {
