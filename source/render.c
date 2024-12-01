@@ -149,7 +149,7 @@ void Renderer_CalculateViewMatrix(void) {
 }
 
 void Renderer_RenderScene(void) {
-	glColor3ub(0, 0, 0);
+	glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	glMatrixMode(GL_PROJECTION);
@@ -164,19 +164,17 @@ void Renderer_RenderScene(void) {
 
     glBindTexture(GL_TEXTURE_2D, texh);
 	glBegin(GL_TRIANGLE_FAN);
-        glColor3ub(127, 127, 127);
+	    glTexCoord2f(1.0f, 1.0f); // Texture coords for lower left corner
+	    glVertex3f(-0.5f, -0.5f, 1.0f);
 
-	    glTexCoord2f(0,0); // Texture coords for lower left corner
-	    glVertex3f(-0.5, -0.5, 1.0);
-
-	    glTexCoord2f(1,   0); // Texture coords for lower right corner
-	    glVertex3f(0.5,  -0.5, 1.0);
+	    glTexCoord2f(0.0f, 1.0f); // Texture coords for lower right corner
+	    glVertex3f(0.5f, -0.5f, 1.0f);
 	    
-	    glTexCoord2f(1,   1); // Texture coords for upper right corner
-	    glVertex3f(0.5,   0.5, 1.0);
+	    glTexCoord2f(0.0f, 0.0f); // Texture coords for upper right corner
+	    glVertex3f(0.5f, 0.5f, 1.0f);
 	    
-	    glTexCoord2f(0,   1); // Texture coords for upper left corner
-	    glVertex3f(-0.5,  0.5, 1.0);
+	    glTexCoord2f(1.0f, 0.0f); // Texture coords for upper left corner
+	    glVertex3f(-0.5f, 0.5f, 1.0f);
 	glEnd();
 }
 void Renderer_FinishScene(void) {
