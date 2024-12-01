@@ -1,8 +1,69 @@
 #include "common.h"
 #include "render.h"
 #include "video.h"
+#include "model.h"
+#include "texture.h"
+#include "util.h"
 
 Renderer renderer;
+
+#ifndef USE_KHR_DEBUG
+    #if !defined(NDEBUG) && defined(GL_KHR_debug) && GL_KHR_debug
+        #define USE_KHR_DEBUG 1
+    #else
+        #define USE_KHR_DEBUG 0
+    #endif
+#endif
+#if USE_KHR_DEBUG
+    #if defined(GLAPIENTRY)
+        #define GLDBGCB GLAPIENTRY
+    #elif defined(APIENTRY)
+        #define GLDBGCB APIENTRY
+    #else
+        #define GLDBGCB
+    #endif
+    static void GLDBGCB r_gl_dbgcb(GLenum src, GLenum type, GLuint id, GLenum sev, GLsizei l, const GLchar *m, const void *u) {
+        (void)l; (void)u;
+        char* sevstr;
+        switch (sev) {
+            case GL_DEBUG_SEVERITY_HIGH: sevstr = "error"; break;
+            case GL_DEBUG_SEVERITY_MEDIUM: sevstr = "warning"; break;
+            case GL_DEBUG_SEVERITY_LOW: sevstr = "warning"; break;
+            #if 0
+            case GL_DEBUG_SEVERITY_NOTIFICATION: ll = LL_INFO; sevstr = "debug message"; break;
+            #endif
+            default: return;
+        }
+        char* srcstr;
+        switch (src) {
+            case GL_DEBUG_SOURCE_API: srcstr = "API"; break;
+            case GL_DEBUG_SOURCE_WINDOW_SYSTEM: srcstr = "Windowing system"; break;
+            case GL_DEBUG_SOURCE_SHADER_COMPILER: srcstr = "Shader compiler"; break;
+            case GL_DEBUG_SOURCE_THIRD_PARTY: srcstr = "Third-party"; break;
+            case GL_DEBUG_SOURCE_APPLICATION: srcstr = "Application"; break;
+            case GL_DEBUG_SOURCE_OTHER: srcstr = "Other"; break;
+            default: srcstr = "Unknown"; break;
+        }
+        char* typestr;
+        switch (type) {
+            case GL_DEBUG_TYPE_ERROR: typestr = "error"; break;
+            case GL_DEBUG_TYPE_DEPRECATED_BEHAVIOR: typestr = "deprecation"; break;
+            case GL_DEBUG_TYPE_UNDEFINED_BEHAVIOR: typestr = "undefined behavior"; break;
+            case GL_DEBUG_TYPE_PORTABILITY: typestr = "portability"; break;
+            case GL_DEBUG_TYPE_PERFORMANCE: typestr = "performance"; break;
+            case GL_DEBUG_TYPE_MARKER: typestr = "marker"; break;
+            case GL_DEBUG_TYPE_PUSH_GROUP: typestr = "push group"; break;
+            case GL_DEBUG_TYPE_POP_GROUP: typestr = "pop group"; break;
+            case GL_DEBUG_TYPE_OTHER: typestr = "other"; break;
+            default: typestr = "unknown"; break;
+        }
+        Log("OpenGL %s 0x%08X (%s %s): %s", sevstr, id, srcstr, typestr, m);
+    }
+#endif
+
+// temporary testing stuff
+static Model model;
+static GLuint texh;
 
 void Renderer_Init(void) {
 	// set values
@@ -24,9 +85,27 @@ void Renderer_Init(void) {
 	renderer.projMatrix[3][2] = 2.0f * renderer.nearPlane * renderer.farPlane * tmp2;
 
 	// set up OpenGL
+    #if USE_KHR_DEBUG
+        Log("Using GL_KHR_debug");
+        glDebugMessageCallback(r_gl_dbgcb, NULL);
+    #endif
+
+	int maxTextureSize;
+	glGetIntegerv(GL_MAX_TEXTURE_SIZE, &maxTextureSize);
+	Log("Max texture size: %d", maxTextureSize);
+
 	glEnable(GL_DEPTH_TEST);
 	glDepthFunc(GL_LEQUAL);
-	glDisable(GL_CULL_FACE);
+	glEnable(GL_CULL_FACE);
+	glEnable(GL_TEXTURE_2D);
+
+    // temporary testing stuff
+	Model_Load(&model, "villager.zkm");
+	Log("Loaded model");
+
+    glGenTextures(1, &texh);
+    glBindTexture(GL_TEXTURE_2D, texh);
+	Texture_LoadFile("assets/textures.png");
 }
 
 void Renderer_CalculateViewMatrix(void) {
@@ -74,4 +153,44 @@ void Renderer_CalculateViewMatrix(void) {
 	renderer.viewMatrix[3][2] =
 		front[0] * renderer.camPos.x + front[1] * renderer.camPos.y + front[2] *
 		renderer.camPos.z;
+}
+
+void Renderer_RenderScene(void) {
+	glColor3ub(0, 0, 0);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+	glMatrixMode(GL_PROJECTION);
+	glLoadMatrixf((float*) renderer.projMatrix);
+	glMatrixMode(GL_MODELVIEW);
+	Renderer_CalculateViewMatrix();
+	glLoadMatrixf((float*) renderer.viewMatrix);
+
+	//ModelRenderOpt opt;
+	//opt.scale = 0.1;
+	//Model_Render(&app.model, &opt);
+
+    glBindTexture(GL_TEXTURE_2D, texh);
+	glBegin(GL_TRIANGLE_FAN);
+        glColor3ub(127, 127, 127);
+
+	    glTexCoord2f(0,0); // Texture coords for lower left corner
+	    glVertex3f(-0.5, -0.5, 1.0);
+
+	    glTexCoord2f(1,   0); // Texture coords for lower right corner
+	    glVertex3f(0.5,  -0.5, 1.0);
+	    
+	    glTexCoord2f(1,   1); // Texture coords for upper right corner
+	    glVertex3f(0.5,   0.5, 1.0);
+	    
+	    glTexCoord2f(0,   1); // Texture coords for upper left corner
+	    glVertex3f(-0.5,  0.5, 1.0);
+	glEnd();
+}
+void Renderer_FinishScene(void) {
+	glFinish();
+	SDL_GL_SwapWindow(video.window);
+}
+
+void Renderer_Free(void) {
+	Model_Free(&model);
 }

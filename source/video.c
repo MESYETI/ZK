@@ -40,20 +40,6 @@ void Video_Init(void) {
 	}
 
 	SDL_SetRelativeMouseMode(SDL_TRUE);
-
-	const char* ext = (const char*) glGetString(GL_EXTENSIONS);
-
-	if (strstr(ext, "GL_ARB_multitexture") == NULL) {
-		Error("Your GPU does not support multitexture");
-	}
-
-	int maxTextureUnits;
-	glGetIntegerv(GL_MAX_TEXTURE_UNITS_ARB, &maxTextureUnits);
-	Log("Max texture units: %d", maxTextureUnits);
-
-	int maxTextureSize;
-	glGetIntegerv(GL_MAX_TEXTURE_SIZE, &maxTextureSize);
-	Log("Max texture size: %d", maxTextureSize);
 }
 
 void Video_Free(void) {

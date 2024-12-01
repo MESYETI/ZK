@@ -1,7 +1,6 @@
 #include "app.h"
 #include "util.h"
 #include "render.h"
-#include "texture.h"
 
 App app;
 
@@ -9,11 +8,6 @@ void App_Init(void) {
 	app.running = true;
 	Video_Init();
 	Renderer_Init();
-
-	Model_Load(&app.model, "villager.zkm");
-	Log("Loaded model");
-
-	Texture_LoadFile(0, "assets/textures.png");
 }
 
 void App_Update(void) {
@@ -73,52 +67,13 @@ void App_Update(void) {
 		renderer.camPos.z += moveZ * speed * app.delta;
 	}
 
-	glColor3ub(0, 0, 0);
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-	glMatrixMode(GL_PROJECTION);
-	glLoadMatrixf((float*) renderer.projMatrix);
-	glMatrixMode(GL_MODELVIEW);
-	Renderer_CalculateViewMatrix();
-	glLoadMatrixf((float*) renderer.viewMatrix);
-
-	ModelRenderOpt opt;
-	opt.scale = 0.1;
-
-	//Model_Render(&app.model, &opt);
-	GLenum err;
-	fprintf(stderr, "Getting errors\n");
-	while ((err = glGetError()) != GL_NO_ERROR) {
-		fprintf(stderr, "Error: %.4x\n", (int) err);
-	}
-
-	glEnable(GL_TEXTURE_2D);
-	glBegin(GL_TRIANGLE_FAN);
-	glTexCoord2f(0,0); // Texture coords for lower left corner
-	glVertex3f(-0.5, -0.5, 1.0);
-
-	glTexCoord2f(1,   0); // Texture coords for lower right corner
-	glVertex3f(0.5,  -0.5, 1.0);
-	
-	glTexCoord2f(1,   1); // Texture coords for upper right corner
-	glVertex3f(0.5,   0.5, 1.0);
-	
-	glTexCoord2f(0,   1); // Texture coords for upper left corner
-	glVertex3f(-0.5,  0.5, 1.0);
-	glEnd();
-
-	glFinish();
-	fprintf(stderr, "Getting errors\n");
-	while ((err = glGetError()) != GL_NO_ERROR) {
-		fprintf(stderr, "Error: %.4x\n", (int) err);
-	}
-	SDL_GL_SwapWindow(video.window);
+    Renderer_RenderScene();
+    Renderer_FinishScene();
 
 	oldFrameTime = newFrameTime;
 }
 
 void App_Free(void) {
-	Model_Free(&app.model);
+	Renderer_Free();
 	Video_Free();
 }
-

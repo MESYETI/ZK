@@ -23,5 +23,8 @@ extern Renderer renderer;
 
 void Renderer_Init(void);
 void Renderer_CalculateViewMatrix(void);
+void Renderer_RenderScene(void);
+void Renderer_FinishScene(void);
+void Renderer_Free(void);
 
 #endif
