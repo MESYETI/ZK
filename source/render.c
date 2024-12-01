@@ -7,13 +7,6 @@
 
 Renderer renderer;
 
-#ifndef USE_KHR_DEBUG
-    #if !defined(NDEBUG) && defined(GL_KHR_debug) && GL_KHR_debug
-        #define USE_KHR_DEBUG 1
-    #else
-        #define USE_KHR_DEBUG 0
-    #endif
-#endif
 #if USE_KHR_DEBUG
     #if defined(GLAPIENTRY)
         #define GLDBGCB GLAPIENTRY
@@ -22,7 +15,7 @@ Renderer renderer;
     #else
         #define GLDBGCB
     #endif
-    static void GLDBGCB r_gl_dbgcb(GLenum src, GLenum type, GLuint id, GLenum sev, GLsizei l, const GLchar *m, const void *u) {
+    static void GLDBGCB glcallback(GLenum src, GLenum type, GLuint id, GLenum sev, GLsizei l, const GLchar *m, const void *u) {
         (void)l; (void)u;
         char* sevstr;
         switch (sev) {
@@ -30,7 +23,7 @@ Renderer renderer;
             case GL_DEBUG_SEVERITY_MEDIUM: sevstr = "warning"; break;
             case GL_DEBUG_SEVERITY_LOW: sevstr = "warning"; break;
             #if 0
-            case GL_DEBUG_SEVERITY_NOTIFICATION: ll = LL_INFO; sevstr = "debug message"; break;
+            case GL_DEBUG_SEVERITY_NOTIFICATION: sevstr = "debug message"; break;
             #endif
             default: return;
         }
@@ -87,7 +80,7 @@ void Renderer_Init(void) {
 	// set up OpenGL
     #if USE_KHR_DEBUG
         Log("Using GL_KHR_debug");
-        glDebugMessageCallback(r_gl_dbgcb, NULL);
+        glDebugMessageCallback(glcallback, NULL);
     #endif
 
 	int maxTextureSize;

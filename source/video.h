@@ -13,6 +13,13 @@
 	#include <GL/gl.h>
 	#include <GL/glext.h>
 #endif
+#ifndef USE_KHR_DEBUG
+    #if !defined(NDEBUG) && defined(GL_KHR_debug) && GL_KHR_debug
+        #define USE_KHR_DEBUG 1
+    #else
+        #define USE_KHR_DEBUG 0
+    #endif
+#endif
 
 typedef struct {
 	SDL_Window*   window;

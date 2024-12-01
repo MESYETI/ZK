@@ -19,6 +19,11 @@ void Video_Init(void) {
 	assert(SDL_GL_SetAttribute(
 		SDL_GL_CONTEXT_MINOR_VERSION, 1
 	) == 0);
+	#if USE_KHR_DEBUG
+	    assert(SDL_GL_SetAttribute(
+		    SDL_GL_CONTEXT_FLAGS, SDL_GL_CONTEXT_DEBUG_FLAG
+	    ) == 0);
+	#endif
 
 	video.window = SDL_CreateWindow(
 		"Not Elite", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 640, 480,
