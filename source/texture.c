@@ -14,9 +14,10 @@ void Texture_LoadFile(const char* path) {
 	}
 
 	glTexImage2D(GL_TEXTURE_2D, 0, ch, width, height, 0, (ch == 3) ? GL_RGB : GL_RGBA, GL_UNSIGNED_BYTE, data);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
     free(data);
 
-	Log("Loaded %s", path);
+	Log("Loaded %s (%dx%d@%dbpp)", path, width, height, ch * 8);
 }

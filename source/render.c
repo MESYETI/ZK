@@ -164,16 +164,16 @@ void Renderer_RenderScene(void) {
 
     glBindTexture(GL_TEXTURE_2D, texh);
 	glBegin(GL_TRIANGLE_FAN);
-	    glTexCoord2f(1.0f, 1.0f); // Texture coords for lower left corner
+	    glTexCoord2f(0.0f, 1.0f); // Texture coords for lower left corner
 	    glVertex3f(-0.5f, -0.5f, 1.0f);
 
-	    glTexCoord2f(0.0f, 1.0f); // Texture coords for lower right corner
+	    glTexCoord2f(1.0f, 1.0f); // Texture coords for lower right corner
 	    glVertex3f(0.5f, -0.5f, 1.0f);
 	    
-	    glTexCoord2f(0.0f, 0.0f); // Texture coords for upper right corner
+	    glTexCoord2f(1.0f, 0.0f); // Texture coords for upper right corner
 	    glVertex3f(0.5f, 0.5f, 1.0f);
 	    
-	    glTexCoord2f(1.0f, 0.0f); // Texture coords for upper left corner
+	    glTexCoord2f(0.0f, 0.0f); // Texture coords for upper left corner
 	    glVertex3f(-0.5f, 0.5f, 1.0f);
 	glEnd();
 }
